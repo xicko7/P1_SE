@@ -3,7 +3,7 @@
 PREFIX = arm-none-eabi-
 
 ARCHFLAGS=-mthumb -mcpu=cortex-m0plus
-CFLAGS=-I./includes/ -g -O2 -Wall -Werror
+CFLAGS=-I./include/ -I./dep/ -I./dep/fsl_dep/ -g -O2 -Wall -Werror
 LDFLAGS=--specs=nano.specs -Wl,--gc-sections,-Map,$(TARGET).map,-Tlink.ld
 
 CC=$(PREFIX)gcc
@@ -12,7 +12,7 @@ OBJCOPY=$(PREFIX)objcopy
 SIZE=$(PREFIX)size
 RM=rm -f
 
-TARGET=bubble
+TARGET=hello_world
 
 SRC=$(wildcard *.c)
 OBJ=$(patsubst %.c, %.o, $(SRC))

@@ -33,14 +33,14 @@
  */
 
 #include <stdint.h>
-#include "fsl_dep/fsl_common.h"
-#include "fsl_dep/fsl_port.h"
+#include "fsl_common.h"
+#include "fsl_port.h"
 #include "clock_config.h"
 #include "board.h"
 #if defined(SDK_I2C_BASED_COMPONENT_USED) && SDK_I2C_BASED_COMPONENT_USED
-#include "fsl_dep/fsl_i2c.h"
+#include "fsl_i2c.h"
 #endif /* SDK_I2C_BASED_COMPONENT_USED */
-#include "fsl_dep/fsl_debug_console.h"
+#include "fsl_debug_console.h"
 
 /*******************************************************************************
  * Variables

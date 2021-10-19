@@ -35,6 +35,7 @@
    ---------------------------------------------------------------------------*/
 
 
+#include "cmsis_gcc.h"
 #ifndef __CORE_CMINSTR_H
 #define __CORE_CMINSTR_H
 
