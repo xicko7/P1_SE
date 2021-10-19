@@ -32,11 +32,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "fsl_device_registers.h"
-#include "fsl_debug_console.h"
-#include "board.h"
+#include "dep/fsl_dep/fsl_device_registers.h"
+#include "dep/fsl_dep/fsl_debug_console.h"
+#include "dep/board.h"
 
-#include "pin_mux.h"
+#include "dep/pin_mux.h"
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
