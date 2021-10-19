@@ -70,7 +70,7 @@ processor_version: 1.1.0
 board: FRDM-KL46Z
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR THE CLOCKS TOOL **/
 
-#include "fsl_smc.h"
+#include "fsl_dep/fsl_smc.h"
 #include "clock_config.h"
 
 /*******************************************************************************

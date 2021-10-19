@@ -32,16 +32,15 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "fsl_debug_console.h"
-#include "dep/board.h""
+#include "dep/fsl_dep/fsl_debug_console.h"
 #include "math.h"
-#include "fsl_mma.h"
-#include "fsl_tpm.h"
+#include "dep/fsl_dep/fsl_mma.h"
+#include "dep/fsl_dep/fsl_tpm.h"
 
-#include ""
-#include "pin_mux.h"
-#include "fsl_gpio.h"
-#include "fsl_port.h"
+#include "dep/board.h"
+#include "dep/pin_mux.h"
+#include "dep/fsl_dep/fsl_gpio.h"
+#include "dep/fsl_dep/fsl_port.h"
 /*******************************************************************************
  * Definitions
  ******************************************************************************/

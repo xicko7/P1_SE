@@ -42,8 +42,8 @@ processor_version: 2.0.0
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 
-#include "fsl_common.h"
-#include "fsl_port.h"
+#include "fsl_dep/fsl_common.h"
+#include "fsl_dep/fsl_port.h"
 #include "pin_mux.h"
 
 /*FUNCTION**********************************************************************
