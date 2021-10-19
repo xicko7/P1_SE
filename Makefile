@@ -3,9 +3,10 @@
 PREFIX = arm-none-eabi-
 
 ARCHFLAGS=-mthumb -mcpu=cortex-m0plus
-CFLAGS=-I./include/ -I./dep/ -I./dep/fsl_dep/ -g -O2 -Wall -Werror
+CFLAGS=-I./include/ -I./dep/fsl_dep/ -I./dep/  -g -O2 -Wall -Werror
 LDFLAGS=--specs=nano.specs -Wl,--gc-sections,-Map,$(TARGET).map,-Tlink.ld
 
+CPU=CPU_MKL46Z128VLH4
 CC=$(PREFIX)gcc
 LD=$(PREFIX)gcc
 OBJCOPY=$(PREFIX)objcopy

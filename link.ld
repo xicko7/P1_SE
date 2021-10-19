@@ -1,6 +1,7 @@
 OUTPUT_FORMAT ("elf32-littlearm")
 SEARCH_DIR(.)
 
+
 STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x0400;
 
 MEMORY

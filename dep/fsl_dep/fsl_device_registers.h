@@ -37,7 +37,7 @@
 
 #ifndef __FSL_DEVICE_REGISTERS_H__
 #define __FSL_DEVICE_REGISTERS_H__
-
+#define CPU_MKL46Z128VLH4
 /*
  * Include the cpu specific register header files.
  *
