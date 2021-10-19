@@ -96,90 +96,133 @@
  * @file MKL46Z4
  * @version 3.4
  * @date 2014-10-14
- * @brief Device specific configuration file for MKL46Z4 (header file)
+ * @brief Device specific configuration file for MKL46Z4 (implementation file)
  *
  * Provides a system configuration function and a global variable that contains
  * the system frequency. It configures the device and initializes the oscillator
  * (PLL) that is part of the microcontroller device.
  */
 
-#ifndef _SYSTEM_MKL46Z4_H_
-#define _SYSTEM_MKL46Z4_H_                       /**< Symbol preventing repeated inclusion */
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <stdint.h>
-
-
-#ifndef DISABLE_WDOG
-  #define DISABLE_WDOG                 1
-#endif
-#ifndef RTC_CLKIN_USED
-  #define RTC_CLKIN_USED               1
-#endif
+#include "fsl_device_registers.h"
 
 
 
-/* Define clock source values */
+/* ----------------------------------------------------------------------------
+   -- Core clock
+   ---------------------------------------------------------------------------- */
 
-#define CPU_XTAL_CLK_HZ                8000000U            /* Value of the external crystal or oscillator clock frequency of the system oscillator (OSC) in Hz */
-#define CPU_INT_SLOW_CLK_HZ            32768U              /* Value of the slow internal oscillator clock frequency in Hz */
-#define CPU_INT_FAST_CLK_HZ            4000000U            /* Value of the fast internal oscillator clock frequency in Hz */
+uint32_t SystemCoreClock = DEFAULT_SYSTEM_CLOCK;
 
-/* RTC oscillator setting */
+/* ----------------------------------------------------------------------------
+   -- SystemInit()
+   ---------------------------------------------------------------------------- */
 
-/* Low power mode enable */
-/* SMC_PMPROT: AVLP=1,ALLS=1,AVLLS=1 */
-#define SYSTEM_SMC_PMPROT_VALUE        0x2AU               /* SMC_PMPROT */
+void SystemInit (void) {
 
-#define DEFAULT_SYSTEM_CLOCK           20971520U           /* Default System clock value */
+  /* Watchdog disable */
+#if (DISABLE_WDOG)
+  /* SIM_COPC: COPT=0,COPCLKS=0,COPW=0 */
+  SIM->COPC = (uint32_t)0x00u;
+#endif /* (DISABLE_WDOG) */
 
-
-/**
- * @brief System clock frequency (core clock)
- *
- * The system clock frequency supplied to the SysTick timer and the processor
- * core clock. This variable can be used by the user application to setup the
- * SysTick timer or configure other parameters. It may also be used by debugger to
- * query the frequency of the debug timer or configure the trace clock speed
- * SystemCoreClock is initialized with a correct predefined value.
- */
-extern uint32_t SystemCoreClock;
-
-/**
- * @brief Setup the microcontroller system.
- *
- * Typically this function configures the oscillator (PLL) that is part of the
- * microcontroller device. For systems with variable clock speed it also updates
- * the variable SystemCoreClock. SystemInit is called from startup_device file.
- */
-void SystemInit (void);
-
-/**
- * @brief Updates the SystemCoreClock variable.
- *
- * It must be called whenever the core clock is changed during program
- * execution. SystemCoreClockUpdate() evaluates the clock register settings and calculates
- * the current core clock.
- */
-void SystemCoreClockUpdate (void);
-
-/**
- * @brief SystemInit function hook.
- *
- * This weak function allows to call specific initialization code during the
- * SystemInit() execution.This can be used when an application specific code needs
- * to be called as close to the reset entry as possible (for example the Multicore
- * Manager MCMGR_EarlyInit() function call).
- * NOTE: No global r/w variables can be used in this hook function because the
- * initialization of these variables happens after this function.
- */
-void SystemInitHook (void);
-
-#ifdef __cplusplus
+  SystemInitHook();
 }
-#endif
 
-#endif  /* _SYSTEM_MKL46Z4_H_ */
+/* ----------------------------------------------------------------------------
+   -- SystemCoreClockUpdate()
+   ---------------------------------------------------------------------------- */
+
+void SystemCoreClockUpdate (void) {
+
+  uint32_t MCGOUTClock;                /* Variable to store output clock frequency of the MCG module */
+  uint16_t Divider;
+
+  if ((MCG->C1 & MCG_C1_CLKS_MASK) == 0x00U) {
+    /* Output of FLL or PLL is selected */
+    if ((MCG->C6 & MCG_C6_PLLS_MASK) == 0x00U) {
+      /* FLL is selected */
+      if ((MCG->C1 & MCG_C1_IREFS_MASK) == 0x00U) {
+        /* External reference clock is selected */
+        MCGOUTClock = CPU_XTAL_CLK_HZ; /* System oscillator drives MCG clock */
+        if ((MCG->C2 & MCG_C2_RANGE0_MASK) != 0x00U) {
+          switch (MCG->C1 & MCG_C1_FRDIV_MASK) {
+          case 0x38U:
+            Divider = 1536U;
+            break;
+          case 0x30U:
+            Divider = 1280U;
+            break;
+          default:
+            Divider = (uint16_t)(32LU << ((MCG->C1 & MCG_C1_FRDIV_MASK) >> MCG_C1_FRDIV_SHIFT));
+            break;
+          }
+        } else {/* ((MCG->C2 & MCG_C2_RANGE_MASK) != 0x00U) */
+          Divider = (uint16_t)(1LU << ((MCG->C1 & MCG_C1_FRDIV_MASK) >> MCG_C1_FRDIV_SHIFT));
+        }
+        MCGOUTClock = (MCGOUTClock / Divider); /* Calculate the divided FLL reference clock */
+      } else { /* (!((MCG->C1 & MCG_C1_IREFS_MASK) == 0x00U)) */
+        MCGOUTClock = CPU_INT_SLOW_CLK_HZ; /* The slow internal reference clock is selected */
+      } /* (!((MCG->C1 & MCG_C1_IREFS_MASK) == 0x00U)) */
+      /* Select correct multiplier to calculate the MCG output clock  */
+      switch (MCG->C4 & (MCG_C4_DMX32_MASK | MCG_C4_DRST_DRS_MASK)) {
+        case 0x00U:
+          MCGOUTClock *= 640U;
+          break;
+        case 0x20U:
+          MCGOUTClock *= 1280U;
+          break;
+        case 0x40U:
+          MCGOUTClock *= 1920U;
+          break;
+        case 0x60U:
+          MCGOUTClock *= 2560U;
+          break;
+        case 0x80U:
+          MCGOUTClock *= 732U;
+          break;
+        case 0xA0U:
+          MCGOUTClock *= 1464U;
+          break;
+        case 0xC0U:
+          MCGOUTClock *= 2197U;
+          break;
+        case 0xE0U:
+          MCGOUTClock *= 2929U;
+          break;
+        default:
+          break;
+      }
+    } else { /* (!((MCG->C6 & MCG_C6_PLLS_MASK) == 0x00U)) */
+      /* PLL is selected */
+      Divider = (((uint16_t)MCG->C5 & MCG_C5_PRDIV0_MASK) + 0x01U);
+      MCGOUTClock = (uint32_t)(CPU_XTAL_CLK_HZ / Divider); /* Calculate the PLL reference clock */
+      Divider = (((uint16_t)MCG->C6 & MCG_C6_VDIV0_MASK) + 24U);
+      MCGOUTClock *= Divider;          /* Calculate the MCG output clock */
+    } /* (!((MCG->C6 & MCG_C6_PLLS_MASK) == 0x00U)) */
+  } else if ((MCG->C1 & MCG_C1_CLKS_MASK) == 0x40U) {
+    /* Internal reference clock is selected */
+    if ((MCG->C2 & MCG_C2_IRCS_MASK) == 0x00U) {
+      MCGOUTClock = CPU_INT_SLOW_CLK_HZ; /* Slow internal reference clock selected */
+    } else { /* (!((MCG->C2 & MCG_C2_IRCS_MASK) == 0x00U)) */
+      Divider = (uint16_t)(0x01LU << ((MCG->SC & MCG_SC_FCRDIV_MASK) >> MCG_SC_FCRDIV_SHIFT));
+      MCGOUTClock = (uint32_t) (CPU_INT_FAST_CLK_HZ / Divider); /* Fast internal reference clock selected */
+    } /* (!((MCG->C2 & MCG_C2_IRCS_MASK) == 0x00U)) */
+  } else if ((MCG->C1 & MCG_C1_CLKS_MASK) == 0x80U) {
+    /* External reference clock is selected */
+    MCGOUTClock = CPU_XTAL_CLK_HZ;     /* System oscillator drives MCG clock */
+  } else { /* (!((MCG->C1 & MCG_C1_CLKS_MASK) == 0x80U)) */
+    /* Reserved value */
+    return;
+  } /* (!((MCG->C1 & MCG_C1_CLKS_MASK) == 0x80U)) */
+  SystemCoreClock = (MCGOUTClock / (0x01U + ((SIM->CLKDIV1 & SIM_CLKDIV1_OUTDIV1_MASK) >> SIM_CLKDIV1_OUTDIV1_SHIFT)));
+
+}
+
+/* ----------------------------------------------------------------------------
+   -- SystemInitHook()
+   ---------------------------------------------------------------------------- */
+
+__attribute__ ((weak)) void SystemInitHook (void) {
+  /* Void implementation of the weak function. */
+}
