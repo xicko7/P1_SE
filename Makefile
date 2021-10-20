@@ -3,8 +3,8 @@
 PREFIX = arm-none-eabi-
 
 ARCHFLAGS=-mthumb -mcpu=cortex-m0plus
-CFLAGS=-I./include/ -I./dep/fsl_dep/ -I./dep/  -g -O2 -Wall -Werror
-LDFLAGS=--specs=nano.specs -Wl,--gc-sections,-Map,$(TARGET).map,-Tlink.ld
+CFLAGS=-I./dep/ -I./include/ -I./dep/fsl_dep/ -D CPU_MKL46Z128VLH4 -g -O2 -Wall -Werror
+LDFLAGS=--specs=nano.specs --specs=nosys.specs -Wl,--gc-sections,-Map,$(TARGET).map,-Tlink.ld
 
 CPU=CPU_MKL46Z128VLH4
 CC=$(PREFIX)gcc
@@ -12,10 +12,12 @@ LD=$(PREFIX)gcc
 OBJCOPY=$(PREFIX)objcopy
 SIZE=$(PREFIX)size
 RM=rm -f
-
+#--specs=nano.specs \
+#--specs=nosys.specs\
+#-T 
 TARGET=hello_world
 
-SRC=$(wildcard *.c)
+SRC=$(dep/ *.c)
 OBJ=$(patsubst %.c, %.o, $(SRC))
 
 all: build size
