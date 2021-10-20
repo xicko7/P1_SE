@@ -32,8 +32,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "dep/fsl_dep/fsl_device_registers.h"
-#include "dep/fsl_dep/fsl_debug_console.h"
+#include "fsl_device_registers.h"
+#include "fsl_debug_console.h"
 #include "dep/board.h"
 
 #include "dep/pin_mux.h"

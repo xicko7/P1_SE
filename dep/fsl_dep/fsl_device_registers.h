@@ -35,9 +35,14 @@
  *
  */
 
+/* CMSIS-style register definitions */
+#include "../include/MKL46Z4.h"
+/* CPU specific feature definitions */
+#include "../include/MKL46Z4_features.h"
+
 #ifndef __FSL_DEVICE_REGISTERS_H__
 #define __FSL_DEVICE_REGISTERS_H__
-#define CPU_MKL46Z128VLH4
+// #define CPU_MKL46Z128VLH4
 /*
  * Include the cpu specific register header files.
  *
@@ -49,10 +54,7 @@
 
 #define KL46Z4_SERIES
 
-/* CMSIS-style register definitions */
-#include "MKL46Z4.h"
-/* CPU specific feature definitions */
-#include "MKL46Z4_features.h"
+
 
 #else
     #error "No valid CPU defined!"

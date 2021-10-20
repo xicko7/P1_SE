@@ -71,7 +71,7 @@ board: FRDM-KL46Z
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR THE CLOCKS TOOL **/
 
 #include "fsl_smc.h"
-#include "dep/clock_config.h"
+#include "clock_config.h"
 
 /*******************************************************************************
  * Definitions
