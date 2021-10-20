@@ -31,53 +31,72 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*
- * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
-!!GlobalInfo
-product: Pins v3.0
-processor: MKL46Z256xxx4
-package_id: MKL46Z256VLL4
-mcu_data: ksdk2_0
-processor_version: 2.0.0
- * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
- */
+#include "board.h"
+#include "fsl_gpio.h"
 
-#include "fsl_common.h"
-#include "fsl_port.h"
 #include "pin_mux.h"
-
-/*FUNCTION**********************************************************************
- * 
- * Function Name : BOARD_InitBootPins
- * Description   : Calls initialization functions.
- * 
- *END**************************************************************************/
-void BOARD_InitBootPins(void) {
-    BOARD_InitPins();
-}
-
-#define PIN29_IDX                       29u   /*!< Pin number for pin 29 in a port */
-
-/*
- * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
-BOARD_InitPins:
-- options: {callFromInitBoot: 'true', coreID: core0, enableClock: 'true'}
-- pin_list:
-  - {pin_num: '26', peripheral: GPIOE, signal: 'GPIO, 29', pin_signal: CMP0_IN5/ADC0_SE4b/PTE29/TPM0_CH2/TPM_CLKIN0}
- * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
- */
-
-/*FUNCTION**********************************************************************
- *
- * Function Name : BOARD_InitPins
- *
- *END**************************************************************************/
-void BOARD_InitPins(void) {
-  CLOCK_EnableClock(kCLOCK_PortE);                           /* Port E Clock Gate Control: Clock enabled */
-
-  PORT_SetPinMux(PORTE, PIN29_IDX, kPORT_MuxAsGpio);         /* PORTE29 (pin 26) is configured as PTE29 */
-}
+/*******************************************************************************
+ * Definitions
+ ******************************************************************************/
+#define BOARD_LED_GPIO BOARD_LED_RED_GPIO
+#define BOARD_LED_GPIO_PIN BOARD_LED_RED_GPIO_PIN
 
 /*******************************************************************************
- * EOF
+ * Prototypes
  ******************************************************************************/
+
+/*******************************************************************************
+ * Variables
+ ******************************************************************************/
+volatile uint32_t g_systickCounter;
+
+/*******************************************************************************
+ * Code
+ ******************************************************************************/
+void SysTick_Handler(void)
+{
+    if (g_systickCounter != 0U)
+    { 
+        g_systickCounter--;
+    }
+}
+
+void SysTick_DelayTicks(uint32_t n)
+{
+    g_systickCounter = n;
+    while(g_systickCounter != 0U)
+    {
+    }
+}
+
+/*!
+ * @brief Main function
+ */
+int main(void)
+{
+    /* Define the init structure for the output LED pin*/
+    gpio_pin_config_t led_config = {
+        kGPIO_DigitalOutput, 0,
+    };
+
+    /* Board pin init */
+    BOARD_InitPins();
+
+    /* Init output LED GPIO. */
+    GPIO_PinInit(BOARD_LED_GPIO, BOARD_LED_GPIO_PIN, &led_config);
+
+    /* Set systick reload value to generate 1ms interrupt */
+    if(SysTick_Config(SystemCoreClock / 1000U))
+    {
+        while(1)
+        {
+        }
+    }
+
+    while (1)
+    {
+        /* Delay 1000 ms */
+        SysTick_DelayTicks(1000U);
+        GPIO_PortToggle(BOARD_LED_GPIO, 1u << BOARD_LED_GPIO_PIN);
+    }
+}
