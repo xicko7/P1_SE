@@ -34,6 +34,7 @@
 #ifndef _FSL_PORT_H_
 #define _FSL_PORT_H_
 
+#include <stdint.h>
 #include "fsl_common.h"
 
 /*!

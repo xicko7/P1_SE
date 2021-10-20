@@ -3,12 +3,14 @@
 PREFIX = arm-none-eabi-
 
 ARCHFLAGS=-mthumb -mcpu=cortex-m0plus
-CFLAGS=-I./include/ -I./dep/fsl_dep/ -I./dep/  -g -O2 -Wall -Werror
-LDFLAGS=--specs=nano.specs -Wl,--gc-sections,-Map,$(TARGET).map,-Tlink.ld
+DFLAGS =  -D CPU_MKL46Z256VLL4 -D SDK_DEBUGCONSOLE
+IFLAGS = -I./include/ -I./dep/fsl_dep/ -I./dep/
+CFLAGS= $(IFLAGS) -g -O2 -Wall -Werror $(DFLAGS)
+LDFLAGS=--specs=nano.specs -Wl, --gc-sections, -Map, $(TARGET).map, -Tlink.ld
 
-CPU=CPU_MKL46Z128VLH4
+
 CC=$(PREFIX)gcc
-LD=$(PREFIX)gcc
+LD= $(PREFIX)gcc
 OBJCOPY=$(PREFIX)objcopy
 SIZE=$(PREFIX)size
 RM=rm -f
@@ -33,7 +35,7 @@ clean:
 	$(CC) -c $(ARCHFLAGS) $(CFLAGS) -o $@ $<
 
 $(TARGET).elf: $(OBJ)
-	$(LD) $(LDFLAGS) -o $@ $(OBJ)
+	$(LD) $(LDFLAGS) $(IFLAGS) -o $@ $(OBJ)
 
 %.srec: %.elf
 	$(OBJCOPY) -O srec $< $@
