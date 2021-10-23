@@ -3,10 +3,10 @@
 PREFIX = arm-none-eabi-
 
 ARCHFLAGS=-mthumb -mcpu=cortex-m0plus
-CFLAGS=-I./dep/ -I./include/ -I./dep/fsl_dep/ -D CPU_MKL46Z128VLH4 -g3 -O2 -Wall -Werror
+CFLAGS=-I./dep/ -I./include/ -I./dep/fsl_dep/ -D CPU_MKL46Z256VLL4 -g3 -O2 -Wall -Werror
 LDFLAGS=--specs=nano.specs --specs=nosys.specs -g3 -Wl,--gc-sections,-Map,$(TARGET).map,-Tlink.ld
 
-CPU=CPU_MKL46Z128VLH4
+#CPU=CPU_MKL46Z128VLH4
 CC=$(PREFIX)gcc
 LD=$(PREFIX)gcc
 OBJCOPY=$(PREFIX)objcopy
@@ -15,7 +15,7 @@ RM=rm -f
 #--specs=nano.specs \
 #--specs=nosys.specs\
 #-T 
-TARGET=led_blinky
+TARGET=hello_world
 
 SRC=$(dep/ *.c)
 OBJ=$(patsubst %.c, %.o, $(SRC))
@@ -45,3 +45,5 @@ $(TARGET).elf: $(OBJ)
 
 size:
 	$(SIZE) $(TARGET).elf
+run: 
+	openocd  | gdb-multiarch -ex "target remote localhost:3333" $(TARGET).elf
