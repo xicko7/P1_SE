@@ -1,3 +1,6 @@
 *.o
 *vscode/
 *.bin
+*.elf
+*.map
+*.srec
