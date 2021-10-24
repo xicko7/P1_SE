@@ -15,7 +15,7 @@ RM=rm -f
 #--specs=nano.specs \
 #--specs=nosys.specs\
 #-T 
-TARGET=hello_world
+TARGET=led_blinky
 
 SRC=$(dep/ *.c)
 OBJ=$(patsubst %.c, %.o, $(SRC))
