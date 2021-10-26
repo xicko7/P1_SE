@@ -44,8 +44,8 @@ $(TARGET).elf: $(OBJ)
 
 size:
 	$(SIZE) $(TARGET).elf
-openocd: 
-	gnome-terminal -- sudo openocd
+run: 
+	gnome-terminal -- sudo openocd && 	gdb-multiarch -ex "target remote localhost:3333" $(TARGET).elf
+
 	
-gdb:
-	gdb-multiarch -ex "target remote localhost:3333" $(TARGET).elf
+#gdb:
