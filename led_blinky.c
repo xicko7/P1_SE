@@ -42,8 +42,8 @@
 #define BOARD_LED_GPIO BOARD_LED_RED_GPIO
 #define BOARD_LED_GPIO_PIN BOARD_LED_RED_GPIO_PIN
 
-#define PIN29_IDX                       29u 
-#define DEFAULT_SYSTEM_CLOCK           20971520U           /* Default System clock value */
+// #define PIN29_IDX                       29u 
+// #define DEFAULT_SYSTEM_CLOCK           20971520U           /* Default System clock value */
 
 /*******************************************************************************
  * Prototypes
@@ -53,7 +53,7 @@
  * Variables
  ******************************************************************************/
 volatile uint32_t g_systickCounter;
-uint32_t SystemCoreClock = DEFAULT_SYSTEM_CLOCK;
+// uint32_t SystemCoreClock = DEFAULT_SYSTEM_CLOCK;
 
 /*******************************************************************************
  * Code
@@ -66,34 +66,34 @@ void SysTick_Handler(void)
     }
 }
 
-void SysTick_DelayTicks(uint32_t n)
-{
-    g_systickCounter = n;
-    while(g_systickCounter != 0U)
-    {
-    }
-}
+// void SysTick_DelayTicks(uint32_t n)
+// {
+//     g_systickCounter = n;
+//     while(g_systickCounter != 0U)
+//     {
+//     }
+// }
 
-void GPIO_PinInit(GPIO_Type *base, uint32_t pin, const gpio_pin_config_t *config)
-{
-    assert(config);
+// void GPIO_PinInit(GPIO_Type *base, uint32_t pin, const gpio_pin_config_t *config)
+// {
+//     assert(config);
 
-    if (config->pinDirection == kGPIO_DigitalInput)
-    {
-        base->PDDR &= ~(1U << pin);
-    }
-    else
-    {
-        GPIO_WritePinOutput(base, pin, config->outputLogic);
-        base->PDDR |= (1U << pin);
-    }
-}
+//     if (config->pinDirection == kGPIO_DigitalInput)
+//     {
+//         base->PDDR &= ~(1U << pin);
+//     }
+//     else
+//     {
+//         GPIO_WritePinOutput(base, pin, config->outputLogic);
+//         base->PDDR |= (1U << pin);
+//     }
+// }
 
-void BOARD_InitPins(void) {
-  CLOCK_EnableClock(kCLOCK_PortE);                           /* Port E Clock Gate Control: Clock enabled */
+// void BOARD_InitPins(void) {
+//   CLOCK_EnableClock(kCLOCK_PortE);                           /* Port E Clock Gate Control: Clock enabled */
 
-  PORT_SetPinMux(PORTE, PIN29_IDX, kPORT_MuxAsGpio);         /* PORTE29 (pin 26) is configured as PTE29 */
-}
+//   PORT_SetPinMux(PORTE, PIN29_IDX, kPORT_MuxAsGpio);         /* PORTE29 (pin 26) is configured as PTE29 */
+// }
 
 
 /*!
