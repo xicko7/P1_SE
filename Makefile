@@ -46,5 +46,6 @@ size:
 	$(SIZE) $(TARGET).elf
 openocd: 
 	gnome-terminal -- sudo openocd
+	
 gdb:
 	gdb-multiarch -ex "target remote localhost:3333" $(TARGET).elf
