@@ -3,7 +3,7 @@
 PREFIX = arm-none-eabi-
 
 ARCHFLAGS=-mthumb -mcpu=cortex-m0plus
-CFLAGS=-I./dep/ -I./include/ -I./dep/fsl_dep/ -D CPU_MKL46Z256VLL4 -g3 -O2 -Wall -Werror
+CFLAGS=-I./dep/ -I./include/ -D CPU_MKL46Z256VLL4 -g3 -O2 -Wall -Werror
 LDFLAGS=--specs=nano.specs --specs=nosys.specs -g3 -Wl,--gc-sections,-Map,$(TARGET).map,-Tlink.ld
 
 CC=$(PREFIX)gcc
@@ -44,5 +44,7 @@ $(TARGET).elf: $(OBJ)
 
 size:
 	$(SIZE) $(TARGET).elf
-run: 
-	openocd  | gdb-multiarch -ex "target remote localhost:3333" $(TARGET).elf
+openocd: 
+	gnome-terminal -- sudo openocd
+gdb:
+	gdb-multiarch -ex "target remote localhost:3333" $(TARGET).elf
