@@ -32,18 +32,17 @@
  */
 
 #include "board.h"
-#include "fsl_gpio.h"
+#include "fsl_gpio.c"
 #include "fsl_port.h"
 
-#include "pin_mux.h"
+#include "system_MKL46Z4.c"
+
+#include "pin_mux.c"
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
 #define BOARD_LED_GPIO BOARD_LED_RED_GPIO
 #define BOARD_LED_GPIO_PIN BOARD_LED_RED_GPIO_PIN
-
-#define PIN29_IDX                       29u 
-#define DEFAULT_SYSTEM_CLOCK           20971520U           /* Default System clock value */
 
 /*******************************************************************************
  * Prototypes
@@ -53,7 +52,6 @@
  * Variables
  ******************************************************************************/
 volatile uint32_t g_systickCounter;
-uint32_t SystemCoreClock = DEFAULT_SYSTEM_CLOCK;
 
 /*******************************************************************************
  * Code
@@ -74,28 +72,6 @@ void SysTick_DelayTicks(uint32_t n)
     }
 }
 
-void GPIO_PinInit(GPIO_Type *base, uint32_t pin, const gpio_pin_config_t *config)
-{
-    assert(config);
-
-    if (config->pinDirection == kGPIO_DigitalInput)
-    {
-        base->PDDR &= ~(1U << pin);
-    }
-    else
-    {
-        GPIO_WritePinOutput(base, pin, config->outputLogic);
-        base->PDDR |= (1U << pin);
-    }
-}
-
-void BOARD_InitPins(void) {
-  CLOCK_EnableClock(kCLOCK_PortE);                           /* Port E Clock Gate Control: Clock enabled */
-
-  PORT_SetPinMux(PORTE, PIN29_IDX, kPORT_MuxAsGpio);         /* PORTE29 (pin 26) is configured as PTE29 */
-}
-
-
 /*!
  * @brief Main function
  */
@@ -113,7 +89,7 @@ int main(void)
     GPIO_PinInit(BOARD_LED_GPIO, BOARD_LED_GPIO_PIN, &led_config);
 
     /* Set systick reload value to generate 1ms interrupt */
-    if(SysTick_Config(SystemCoreClock / 1000U))
+    if(SysTick_Config(1000U))
     {
         while(1)
         {
@@ -123,7 +99,7 @@ int main(void)
     while (1)
     {
         /* Delay 1000 ms */
-        SysTick_DelayTicks(1000U);
+        SysTick_DelayTicks(100U);
         GPIO_PortToggle(BOARD_LED_GPIO, 1u << BOARD_LED_GPIO_PIN);
     }
 }
