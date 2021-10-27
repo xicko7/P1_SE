@@ -1,6 +1,7 @@
 //*****************************************************************************
 // Declaration of the default fault handlers
 //*****************************************************************************
+#include "board.h"
 
 #define WEAK __attribute__ ((weak))
 
@@ -178,7 +179,7 @@ void Default_ResetHandler(void)
 #pragma weak SVCIntHandler = DefaultIntHandler
 #pragma weak DebugMonIntHandler = DefaultIntHandler
 #pragma weak PendSVIntHandler = DefaultIntHandler
-#pragma weak SysTickIntHandler = DefaultIntHandler
+#pragma weak SysTickIntHandler = SysTick_Handler
 #pragma weak DMA0IntHandler = Default_ResetHandler
 #pragma weak DMA1IntHandler = Default_ResetHandler
 #pragma weak DMA2IntHandler = Default_ResetHandler
@@ -224,4 +225,12 @@ static void DefaultIntHandler(void)
 {
 	for(;;);
 }
+volatile uint32_t g_systickCounter;
 
+void SysTick_Handler(void)
+{
+    if (g_systickCounter != 0U)
+    { 
+        g_systickCounter--;
+    }
+}

@@ -35,7 +35,6 @@
 #include "fsl_gpio.c"
 #include "fsl_port.h"
 
-#include "system_MKL46Z4.c"
 
 #include "pin_mux.c"
 /*******************************************************************************
@@ -43,7 +42,6 @@
  ******************************************************************************/
 #define BOARD_LED_GPIO BOARD_LED_RED_GPIO
 #define BOARD_LED_GPIO_PIN BOARD_LED_RED_GPIO_PIN
-
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
@@ -51,18 +49,12 @@
 /*******************************************************************************
  * Variables
  ******************************************************************************/
-volatile uint32_t g_systickCounter;
-
+ 
 /*******************************************************************************
  * Code
  ******************************************************************************/
-void SysTick_Handler(void)
-{
-    if (g_systickCounter != 0U)
-    { 
-        g_systickCounter--;
-    }
-}
+
+volatile uint32_t g_systickCounter;
 
 void SysTick_DelayTicks(uint32_t n)
 {
@@ -77,6 +69,7 @@ void SysTick_DelayTicks(uint32_t n)
  */
 int main(void)
 {
+    uint32_t SystemCoreClock=DEFAULT_SYSTEM_CLOCK;
     /* Define the init structure for the output LED pin*/
     gpio_pin_config_t led_config = {
         kGPIO_DigitalOutput, 0,
@@ -89,7 +82,7 @@ int main(void)
     GPIO_PinInit(BOARD_LED_GPIO, BOARD_LED_GPIO_PIN, &led_config);
 
     /* Set systick reload value to generate 1ms interrupt */
-    if(SysTick_Config(1000U))
+    if(SysTick_Config(SystemCoreClock / 1000U))
     {
         while(1)
         {
